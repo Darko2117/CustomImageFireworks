@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CustomImageFireworks:jar">
+    <output-path>D:/Mc/server/plugins</output-path>
+    <root id="archive" name="CustomImageFireworks.jar">
+      <element id="module-output" name="CustomImageFireworks" />
+    </root>
+  </artifact>
+</component>
