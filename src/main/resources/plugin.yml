@@ -2,7 +2,7 @@ version: 1.0
 name: CustomImageFireworks
 description: Want to make a firework display an image when it explodes? Sure go ahead!
 author: Daki
-main: com.daki.main.Main
+main: com.daki.main.CIF
 api-version: 1.16
 commands:
   cif:

@@ -8,9 +8,9 @@ public class Register extends JavaPlugin {
 
     public static void registerEvents() {
 
-        registerEvents(
-
-        );
+//        registerEvents(
+//
+//        );
 
     }
 
