@@ -6,4 +6,8 @@ main: com.daki.main.CIF
 api-version: 1.16
 commands:
   cif:
-    premission: cif.default
+    permission: cif.default
+  cifreload:
+    permission: cif.reload
+  cifcreatefireworks:
+    permission: cif.create-fireworks

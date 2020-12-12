@@ -65,7 +65,7 @@ public class Icons {
 
     public static ItemStack getBlankSpaceIcon(){
 
-        ItemStack icon = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        ItemStack icon = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
 
         ItemMeta meta = icon.getItemMeta();
 
@@ -74,6 +74,28 @@ public class Icons {
         icon.setItemMeta(meta);
 
         return icon;
+
+    }
+
+    public static ItemStack getPreviousPageItemStack() {
+
+        ItemStack item = new ItemStack(Material.PAPER);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.YELLOW + "<< Previous Page");
+        item.setItemMeta(meta);
+
+        return item;
+
+    }
+
+    public static ItemStack getNextPageItemStack() {
+
+        ItemStack item = new ItemStack(Material.PAPER);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.YELLOW + "Next Page >>");
+        item.setItemMeta(meta);
+
+        return item;
 
     }
 
