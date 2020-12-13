@@ -1,6 +1,7 @@
 package com.daki.main.config;
 
 import com.daki.main.CIF;
+import com.daki.main.Cache;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
@@ -54,13 +55,38 @@ public class Config {
 
         //----------------------------------------------------------------------------------------------------
 
+        //Images
+
+        if (!config.contains("Images-path")) {
+            config.set("Images-path", new File(CIF.getInstance().getDataFolder() + "/images/").getAbsolutePath() + "/");
+            CIF.getInstance().getLogger().info("Images-path not found in the config, creating it now.");
+        }
+
+        //----------------------------------------------------------------------------------------------------
+
         //Resized images
 
         if (!config.contains("Resized-images-path")) {
             config.set("Resized-images-path", new File(CIF.getInstance().getDataFolder() + "/resized-images/").getAbsolutePath() + "/");
+            CIF.getInstance().getLogger().info("Resized-images-path not found in the config, creating it now.");
         }
 
+        //----------------------------------------------------------------------------------------------------
+
         CIF.getInstance().saveConfig();
+
+    }
+
+    public static void reloadCachedConfigData() {
+
+        Cache.setDatabaseHost(CIF.getInstance().getConfig().getString("Database.host"));
+        Cache.setDatabasePort(CIF.getInstance().getConfig().getString("Database.port"));
+        Cache.setDatabaseName(CIF.getInstance().getConfig().getString("Database.databaseName"));
+        Cache.setDatabaseUsername(CIF.getInstance().getConfig().getString("Database.username"));
+        Cache.setDatabasePassword(CIF.getInstance().getConfig().getString("Database.password"));
+
+        Cache.setImagesPath(CIF.getInstance().getConfig().getString("Images-path"));
+        Cache.setResizedImagesPath(CIF.getInstance().getConfig().getString("Resized-images-path"));
 
     }
 

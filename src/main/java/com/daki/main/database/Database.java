@@ -2,10 +2,12 @@ package com.daki.main.database;
 
 import com.daki.main.CIF;
 import com.daki.main.Cache;
+import com.daki.main.firework.Firework;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,23 +15,35 @@ public class Database {
 
     public static Connection connection;
 
-    public static void reinitialize() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
+    public static void reinitialize(Boolean async) {
 
-                if (!reconnect()) {
-                    CIF.getInstance().getLogger().severe("Connection to the database failed.");
-                    return;
+        if (async) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (!reconnect()) {
+                        CIF.getInstance().getLogger().severe("Connection to the database failed.");
+                        return;
+                    }
+                    if (!createTables()) {
+                        CIF.getInstance().getLogger().severe("Creating database tables failed.");
+                        return;
+                    }
+                    reloadCachedDatabaseData();
                 }
-                if (!createTables()) {
-                    CIF.getInstance().getLogger().severe("Creating database tables failed.");
-                    return;
-                }
-                /* TODO Load values from the database to cache*/
-
+            }.runTaskAsynchronously(CIF.getInstance());
+        } else {
+            if (!reconnect()) {
+                CIF.getInstance().getLogger().severe("Connection to the database failed.");
+                return;
             }
-        }.runTaskAsynchronously(CIF.getInstance());
+            if (!createTables()) {
+                CIF.getInstance().getLogger().severe("Creating database tables failed.");
+                return;
+            }
+            reloadCachedDatabaseData();
+        }
+
     }
 
     public static Boolean reconnect() {
@@ -55,7 +69,7 @@ public class Database {
 
         //fireworks table
 
-        query = "CREATE TABLE IF NOT EXISTS fireworks(" + "ID INT NOT NULL AUTO_INCREMENT," + "PRIMARY KEY (ID))";
+        query = "CREATE TABLE IF NOT EXISTS fireworks(ID INT NOT NULL,PRIMARY KEY (ID))";
 
         try {
             connection.prepareStatement(query).executeUpdate();
@@ -66,12 +80,10 @@ public class Database {
 
         columns.add("ALTER TABLE fireworks ADD Name TEXT NOT NULL");
         columns.add("ALTER TABLE fireworks ADD ImageName TEXT NOT NULL");
+        columns.add("ALTER TABLE fireworks ADD Power INT NOT NULL");
         columns.add("ALTER TABLE fireworks ADD Cooldown INT NOT NULL");
-        columns.add("ALTER TABLE fireworks ADD Recharge INT NOT NULL");
-        columns.add("ALTER TABLE fireworks ADD ChargeLimit INT NOT NULL");
         columns.add("ALTER TABLE fireworks ADD FireworkDimensions TEXT NOT NULL");
         columns.add("ALTER TABLE fireworks ADD ResizedImageDimensions TEXT NOT NULL");
-        columns.add("ALTER TABLE fireworks ADD Item TEXT NOT NULL");
         for (String statement : columns) {
             try {
                 connection.prepareStatement(statement).executeUpdate();
@@ -95,7 +107,6 @@ public class Database {
         columns.add("ALTER TABLE users ADD UUID TEXT NOT NULL");
         columns.add("ALTER TABLE users ADD Username TEXT NOT NULL");
         columns.add("ALTER TABLE users ADD AvailableFireworks TEXT NOT NULL");
-        columns.add("ALTER TABLE users ADD FireworkItems TEXT NOT NULL");
         for (String statement : columns) {
             try {
                 connection.prepareStatement(statement).executeUpdate();
@@ -111,6 +122,39 @@ public class Database {
         }
 
         return true;
+
+    }
+
+
+    public static void reloadCachedDatabaseData() {
+
+        String statement = "SELECT * FROM fireworks;";
+
+        Cache.clearLoadedFireworks();
+
+        try {
+
+            ResultSet rs = Database.connection.prepareStatement(statement).executeQuery();
+
+            while (rs.next()) {
+
+                String ID = rs.getString("ID");
+                String name = rs.getString("Name");
+                String imageName = rs.getString("ImageName");
+                String power = rs.getString("Power");
+                String cooldown = rs.getString("Cooldown");
+                String fireworkDimensions = rs.getString("FireworkDimensions");
+                String resizedImageDimensions = rs.getString("ResizedImageDimensions");
+
+                Firework firework = new Firework(ID, name, imageName, power, cooldown, fireworkDimensions, resizedImageDimensions);
+
+                Cache.addLoadedFirework(firework);
+
+            }
+
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
 
     }
 

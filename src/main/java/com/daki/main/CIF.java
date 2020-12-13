@@ -21,13 +21,12 @@ public class CIF extends JavaPlugin {
 
         Config.checkAndSaveDefault();
 
-        Cache.reloadCachedConfigData();
+        Config.reloadCachedConfigData();
 
         Register.registerEvents();
         Register.registerCommands();
 
-        Database.reinitialize();
-        Cache.reloadCachedDatabaseData();
+        Database.reinitialize(true);
 
         CIF.getInstance().getLogger().info("CustomImageFireworks started...");
         CIF.getInstance().getLogger().info("--------------------------------------------------");

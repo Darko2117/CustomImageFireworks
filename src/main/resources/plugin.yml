@@ -11,3 +11,5 @@ commands:
     permission: cif.reload
   cifcreatefireworks:
     permission: cif.create-fireworks
+  ciflistallfireworks:
+    permission: cif.list-all-fireworks

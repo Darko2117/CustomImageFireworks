@@ -2,6 +2,7 @@ package com.daki.main.register;
 
 import com.daki.main.CIF;
 import com.daki.main.UI.panels.PanelManager;
+import com.daki.main.commands.AllFireworks_Command;
 import com.daki.main.commands.CIF_Command;
 import com.daki.main.commands.CreateNewFirework_Command;
 import com.daki.main.commands.Reload_Command;
@@ -13,7 +14,8 @@ public class Register extends JavaPlugin {
     public static void registerEvents() {
 
         registerEvents(
-                new PanelManager()
+                new PanelManager(),
+                new CreateNewFirework_Command()
         );
 
     }
@@ -29,6 +31,7 @@ public class Register extends JavaPlugin {
         CIF.getInstance().getCommand("cif").setExecutor(new CIF_Command());
         CIF.getInstance().getCommand("cifreload").setExecutor(new Reload_Command());
         CIF.getInstance().getCommand("cifcreatefireworks").setExecutor(new CreateNewFirework_Command());
+        CIF.getInstance().getCommand("ciflistallfireworks").setExecutor(new AllFireworks_Command());
 
     }
 

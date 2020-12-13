@@ -80,8 +80,11 @@ public class Icons {
     public static ItemStack getPreviousPageItemStack() {
 
         ItemStack item = new ItemStack(Material.PAPER);
+
         ItemMeta meta = item.getItemMeta();
+
         meta.setDisplayName(ChatColor.YELLOW + "<< Previous Page");
+
         item.setItemMeta(meta);
 
         return item;
@@ -91,8 +94,11 @@ public class Icons {
     public static ItemStack getNextPageItemStack() {
 
         ItemStack item = new ItemStack(Material.PAPER);
+
         ItemMeta meta = item.getItemMeta();
+
         meta.setDisplayName(ChatColor.YELLOW + "Next Page >>");
+
         item.setItemMeta(meta);
 
         return item;
