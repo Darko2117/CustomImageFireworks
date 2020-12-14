@@ -129,12 +129,14 @@ public class PanelManager implements Listener {
                 return;
             } else {
                 player.closeInventory();
-                String ID = clickedItem.getItemMeta().getLore().get(0).substring(4);
-                Firework firework = Cache.getFireworksByID(ID);
-
+                String ID = clickedItem.getItemMeta().getLore().get(1).substring(4);
+                Firework firework = Cache.getFireworkByID(ID);
                 org.bukkit.entity.Firework fireworkEntity = (org.bukkit.entity.Firework) player.getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK);
                 FireworkMeta fireworkMeta = fireworkEntity.getFireworkMeta();
                 fireworkMeta.setPower(Integer.parseInt(firework.getPower()));
+                fireworkMeta.setLore(clickedItem.getItemMeta().getLore());
+                fireworkEntity.setFireworkMeta(fireworkMeta);
+                Cache.addLaunchedFirework(player, fireworkEntity);
                 return;
             }
 

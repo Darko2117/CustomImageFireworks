@@ -21,7 +21,7 @@ public class Config {
         directories.add("resized-images");
 
         for (String directory : directories) {
-            File file = new File(CIF.getInstance().getDataFolder() + "/" + directory);
+            File file = new File(CIF.getInstance().getDataFolder() + "\\" + directory);
             if (!file.exists()) {
                 if (file.mkdir())
                     CIF.getInstance().getLogger().info(file.getName() + " directory created!");
@@ -58,7 +58,7 @@ public class Config {
         //Images
 
         if (!config.contains("Images-path")) {
-            config.set("Images-path", new File(CIF.getInstance().getDataFolder() + "/images/").getAbsolutePath() + "/");
+            config.set("Images-path", new File(CIF.getInstance().getDataFolder() + "\\images\\").getAbsolutePath() + "\\");
             CIF.getInstance().getLogger().info("Images-path not found in the config, creating it now.");
         }
 
@@ -67,8 +67,17 @@ public class Config {
         //Resized images
 
         if (!config.contains("Resized-images-path")) {
-            config.set("Resized-images-path", new File(CIF.getInstance().getDataFolder() + "/resized-images/").getAbsolutePath() + "/");
+            config.set("Resized-images-path", new File(CIF.getInstance().getDataFolder() + "\\resized-images\\").getAbsolutePath() + "\\");
             CIF.getInstance().getLogger().info("Resized-images-path not found in the config, creating it now.");
+        }
+
+        //----------------------------------------------------------------------------------------------------
+
+        //How many times the image is drawn
+
+        if (!config.contains("Times-to-draw-image")) {
+            config.set("Times-to-draw-image", 3);
+            CIF.getInstance().getLogger().info("Times-to-draw-image not found in the config, creating it now.");
         }
 
         //----------------------------------------------------------------------------------------------------
@@ -87,6 +96,17 @@ public class Config {
 
         Cache.setImagesPath(CIF.getInstance().getConfig().getString("Images-path"));
         Cache.setResizedImagesPath(CIF.getInstance().getConfig().getString("Resized-images-path"));
+        Cache.setTimesToDrawImage(CIF.getInstance().getConfig().getInt("Times-to-draw-image"));
+
+        if (!Cache.getImagesPath().endsWith("\\")) {
+            CIF.getInstance().getConfig().set("Images-path", Cache.getImagesPath().concat("\\"));
+            CIF.getInstance().saveConfig();
+        }
+
+        if (!Cache.getResizedImagesPath().endsWith("\\")) {
+            CIF.getInstance().getConfig().set("Resized-images-path", Cache.getResizedImagesPath().concat("\\"));
+            CIF.getInstance().saveConfig();
+        }
 
     }
 

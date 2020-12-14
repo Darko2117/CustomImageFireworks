@@ -20,11 +20,13 @@ public class Reload_Command implements CommandExecutor {
             public void run() {
 
                 CIF.getInstance().reloadConfig();
+                Config.checkAndSaveDefault();
                 Config.reloadCachedConfigData();
                 Database.reinitialize(false);
                 PanelManager.reloadPanelsForAllPlayers();
 
                 commandSender.sendMessage(ChatColor.GREEN + "Plugin reloaded!");
+                CIF.getInstance().getLogger().info(ChatColor.GREEN + "Plugin reloaded!");
 
             }
         }.runTaskAsynchronously(CIF.getInstance());

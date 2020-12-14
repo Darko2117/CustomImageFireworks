@@ -11,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class AllFireworksPanel {
@@ -20,7 +19,7 @@ public class AllFireworksPanel {
     Integer inventorySize = 54;
     List<Inventory> inventoryPages = new ArrayList<>();
 
-    AllFireworksPanel(){
+    AllFireworksPanel() {
 
         List<ItemStack> fireworkIcons = new ArrayList<>();
 
@@ -28,8 +27,11 @@ public class AllFireworksPanel {
 
             ItemStack item = new ItemStack(Material.FIREWORK_ROCKET);
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(firework.getName());
-            meta.setLore(Collections.singletonList("ID: " + firework.getID()));
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', firework.getName()));
+            List<String> lore = new ArrayList<>();
+            lore.add("Image: " + firework.getImageName());
+            lore.add(("ID: " + firework.getID()));
+            meta.setLore(lore);
             item.setItemMeta(meta);
             fireworkIcons.add(item);
 

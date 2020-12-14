@@ -6,9 +6,14 @@ import com.daki.main.UI.panels.StartingPanel;
 import com.daki.main.firework.Firework;
 import org.bukkit.entity.Player;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Cache {
 
@@ -19,12 +24,15 @@ public class Cache {
     static String databasePassword = null;
     static String imagesPath = null;
     static String resizedImagesPath = null;
+    static Integer timesToDrawImage = null;
     static List<Firework> loadedFireworks = new ArrayList<>();
     static HashMap<Player, StartingPanel> startingPanels = new HashMap<>();
     static HashMap<Player, ChooseImageNamePanel> chooseImageNamePanels = new HashMap<>();
     static HashMap<Player, AllFireworksPanel> allFireworksPanels = new HashMap<>();
     static HashMap<Player, Integer> whatPageOfChooseImageNamePanelIsPlayerOn = new HashMap<>();
     static HashMap<Player, Integer> whatPageOfAllFireworksPanelIsPlayerOn = new HashMap<>();
+    static HashMap<Player, org.bukkit.entity.Firework> launchedFireworks = new HashMap<>();
+    static HashMap<String, BufferedImage> loadedImages = new HashMap<>();
 
     public static String getDatabaseHost() {
         return databaseHost;
@@ -82,6 +90,14 @@ public class Cache {
         Cache.resizedImagesPath = resizedImagesPath;
     }
 
+    public static Integer getTimesToDrawImage() {
+        return timesToDrawImage;
+    }
+
+    public static void setTimesToDrawImage(Integer timesToDrawImage) {
+        Cache.timesToDrawImage = timesToDrawImage;
+    }
+
     public static List<Firework> getLoadedFireworks() {
         return loadedFireworks;
     }
@@ -102,7 +118,7 @@ public class Cache {
         loadedFireworks.clear();
     }
 
-    public static Firework getFireworksByID(String ID) {
+    public static Firework getFireworkByID(String ID) {
         for (Firework firework : loadedFireworks) {
             if (firework.getID().equals(ID)) {
                 return firework;
@@ -209,6 +225,68 @@ public class Cache {
 
     public static void clearWhatPageOfAllFireworksPanelIsPlayerOn() {
         whatPageOfAllFireworksPanelIsPlayerOn.clear();
+    }
+
+    public static HashMap<Player, org.bukkit.entity.Firework> getLaunchedFireworks() {
+        return launchedFireworks;
+    }
+
+    public static void setLaunchedFireworks(HashMap<Player, org.bukkit.entity.Firework> launchedFireworks) {
+        Cache.launchedFireworks = launchedFireworks;
+    }
+
+    public static void addLaunchedFirework(Player player, org.bukkit.entity.Firework firework) {
+        launchedFireworks.put(player, firework);
+    }
+
+    public static void removeLaunchedFirework(Player player, org.bukkit.entity.Firework firework) {
+        launchedFireworks.remove(player, firework);
+    }
+
+    public static void clearLaunchedFireworks() {
+        launchedFireworks.clear();
+    }
+
+    public static Player getPlayerFromLaunchedFirework(org.bukkit.entity.Firework firework) {
+        for (Map.Entry<Player, org.bukkit.entity.Firework> entry : launchedFireworks.entrySet()) {
+            if (entry.getValue().equals(firework)) return entry.getKey();
+        }
+        return null;
+    }
+
+    public static HashMap<String, BufferedImage> getLoadedImages() {
+        return loadedImages;
+    }
+
+    public static void setLoadedImages(HashMap<String, BufferedImage> loadedImages) {
+        Cache.loadedImages = loadedImages;
+    }
+
+    public static void loadImage(String imageName) {
+
+        try {
+
+            if (!Cache.getResizedImagesPath().endsWith("\\"))
+                Cache.setResizedImagesPath(Cache.getResizedImagesPath().concat("\\"));
+
+            Image image = ImageIO.read(new File(Cache.getResizedImagesPath() + imageName));
+
+            BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+            Graphics2D bGr = bufferedImage.createGraphics();
+            bGr.drawImage(image, 0, 0, null);
+            bGr.dispose();
+
+            loadedImages.put(imageName, bufferedImage);
+
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+    }
+
+    public static void unloadImage(String imageName) {
+        loadedImages.remove(imageName);
     }
 
 }

@@ -6,6 +6,7 @@ import com.daki.main.commands.AllFireworks_Command;
 import com.daki.main.commands.CIF_Command;
 import com.daki.main.commands.CreateNewFirework_Command;
 import com.daki.main.commands.Reload_Command;
+import com.daki.main.firework.FireworkExplosionListener;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,7 +16,8 @@ public class Register extends JavaPlugin {
 
         registerEvents(
                 new PanelManager(),
-                new CreateNewFirework_Command()
+                new CreateNewFirework_Command(),
+                new FireworkExplosionListener()
         );
 
     }

@@ -7,7 +7,7 @@ import java.io.File;
 
 public class Methods {
 
-    public static Integer[] getDimensionsFromDimensionString(String dimensionString){
+    public static Integer[] getDimensionsFromDimensionString(String dimensionString) {
 
         Integer[] results = new Integer[2];
 
@@ -25,7 +25,7 @@ public class Methods {
 
     }
 
-    public static String getImageNameWithDimensions(String imageName, Integer width, Integer height) {
+    public static String getImageNameWithDimensions(String imageName, String dimensions) {
 
         StringBuilder formatName = new StringBuilder(imageName);
         formatName.delete(0, formatName.lastIndexOf(".") + 1);
@@ -34,21 +34,32 @@ public class Methods {
         newName.reverse();
         newName.delete(0, formatName.length() + 1);
         newName.reverse();
-        newName.append("_").append(width).append("x").append(height).append(".").append(formatName);
+        newName.append("_").append(dimensions).append(".").append(formatName);
 
         return newName.toString();
 
     }
 
-    public static void resizeImageIfNotExisting(String imageName, String resizedImageName, Integer wantedWidth, Integer wantedHeight) {
+    public static void resizeImageIfNotExisting(String imageName, String resizedImageDimensions) {
 
         try {
 
+            Integer width = Methods.getDimensionsFromDimensionString(resizedImageDimensions)[0];
+            Integer height = Methods.getDimensionsFromDimensionString(resizedImageDimensions)[1];
+
+            String resizedImageName = Methods.getImageNameWithDimensions(imageName, resizedImageDimensions);
+
+            for (File file : new File(Cache.getResizedImagesPath()).listFiles()) {
+                if (file.getName().equals(resizedImageName)) {
+                    return;
+                }
+            }
+
             CIF.getInstance().getLogger().info("Image resizing started.");
 
-            Image image = ImageIO.read(new File(CIF.getInstance().getDataFolder() + "/images/" + imageName));
+            Image image = ImageIO.read(new File(Cache.getImagesPath() + imageName));
 
-            image = image.getScaledInstance(wantedWidth, wantedHeight, Image.SCALE_DEFAULT);
+            image = image.getScaledInstance(width, height, Image.SCALE_DEFAULT);
 
             BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
 
@@ -58,9 +69,6 @@ public class Methods {
 
             StringBuilder formatName = new StringBuilder(imageName);
             formatName.delete(0, formatName.lastIndexOf(".") + 1);
-
-            if (!Cache.getResizedImagesPath().endsWith("\\"))
-                Cache.setResizedImagesPath(Cache.getResizedImagesPath().concat("\\"));
 
             File path = new File(Cache.getResizedImagesPath() + resizedImageName);
 

@@ -5,6 +5,7 @@ import com.daki.main.Cache;
 import com.daki.main.Methods;
 import com.daki.main.database.Database;
 import com.daki.main.firework.Firework;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -100,12 +101,7 @@ public class CreateNewFirework_Command implements CommandExecutor, Listener {
                     }
                 }
 
-                Integer resizedImageWidth = Methods.getDimensionsFromDimensionString(resizedImageDimensions)[0];
-                Integer resizedImageHeight = Methods.getDimensionsFromDimensionString(resizedImageDimensions)[1];
-
-                String resizedImageName = Methods.getImageNameWithDimensions(imageName, resizedImageWidth, resizedImageHeight);
-
-                Methods.resizeImageIfNotExisting(imageName, resizedImageName, resizedImageWidth, resizedImageHeight);
+                Methods.resizeImageIfNotExisting(imageName, resizedImageDimensions);
 
                 String statement = "INSERT INTO fireworks(ID, Name, ImageName, Power, Cooldown, FireworkDimensions, ResizedImageDimensions) VALUES ("
                         + "'" + ID + "', "
@@ -122,8 +118,12 @@ public class CreateNewFirework_Command implements CommandExecutor, Listener {
                     Database.connection.prepareStatement(statement).executeUpdate();
                     CIF.getInstance().getLogger().info("Firework successfully inserted into the database.");
 
-                    Firework firework = new Firework(ID, name, imageName, power, cooldown, fireworkDimensions, resizedImageDimensions);
-                    Cache.addLoadedFirework(firework);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "cifreload");
+                        }
+                    }.runTask(CIF.getInstance());
 
                 } catch (Exception exception) {
                     exception.printStackTrace();
@@ -164,7 +164,12 @@ class PromptTwo extends StringPrompt {
     @Override
     public String getPromptText(ConversationContext context) {
         Player player = (Player) context.getForWhom();
-        player.openInventory(Cache.getChooseImageNamePanels().get(player).getInventoryPages().get(Cache.getWhatPageOfChooseImageNamePanelIsPlayerOn().get(player)));
+        if (!Cache.getChooseImageNamePanels().get(player).getInventoryPages().isEmpty()) {
+            player.openInventory(Cache.getChooseImageNamePanels().get(player).getInventoryPages().get(Cache.getWhatPageOfChooseImageNamePanelIsPlayerOn().get(player)));
+        } else {
+            player.abandonConversation(CreateNewFirework_Command.ongoingConversations.get(player));
+            return ChatColor.RED + "There's no images to choose from in \n" + Cache.getImagesPath();
+        }
         return ChatColor.YELLOW + "Select a firework image!";
     }
 
