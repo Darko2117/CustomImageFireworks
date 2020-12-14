@@ -266,9 +266,6 @@ public class Cache {
 
         try {
 
-            if (!Cache.getResizedImagesPath().endsWith("\\"))
-                Cache.setResizedImagesPath(Cache.getResizedImagesPath().concat("\\"));
-
             Image image = ImageIO.read(new File(Cache.getResizedImagesPath() + imageName));
 
             BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
