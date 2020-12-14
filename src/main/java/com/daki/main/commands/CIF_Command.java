@@ -1,6 +1,7 @@
 package com.daki.main.commands;
 
 import com.daki.main.Cache;
+import com.daki.main.UI.panels.StartingPanel;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,6 +15,8 @@ public class CIF_Command implements CommandExecutor {
         if (!(commandSender instanceof Player)) return true;
         Player player = (Player) commandSender;
 
+        Cache.removeStartingPanel(player);
+        Cache.addStartingPanel(player, new StartingPanel(player));
         player.openInventory(Cache.getStartingPanels().get(player).getInventory());
 
         return true;

@@ -12,7 +12,7 @@ public class StartingPanel {
     Integer inventorySize = 9;
     Inventory inventory = Bukkit.createInventory(null, inventorySize, inventoryTitle);
 
-    StartingPanel(Player player) {
+    public StartingPanel(Player player) {
 
         if (player.hasPermission("cif.list-own-fireworks")) {
             inventory.setItem(0, Icons.getPlayersAvailableFireworksIcon());

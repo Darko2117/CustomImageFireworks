@@ -45,8 +45,6 @@ public class FireworkExplosionListener implements Listener {
 
                 Float yaw = Math.abs(player.getLocation().getYaw());
 
-                player.sendMessage(String.valueOf(yaw));
-
                 while (yaw > 360) yaw -= 360;
 
                 String facing;
@@ -55,8 +53,6 @@ public class FireworkExplosionListener implements Listener {
                 else if (yaw >= 135 && yaw < 225) facing = "north";
                 else if (yaw >= 225 && yaw < 315) facing = "east";
                 else facing = "south";
-
-                player.sendMessage(facing);
 
                 for (Integer i = 0; i < Cache.getTimesToDrawImage(); i++) {
                     drawImage(image, location, imageAreaX, imageAreaY, facing);
