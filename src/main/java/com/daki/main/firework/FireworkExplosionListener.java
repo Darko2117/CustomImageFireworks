@@ -27,47 +27,52 @@ public class FireworkExplosionListener implements Listener {
             @Override
             public void run() {
 
-                org.bukkit.entity.Firework fireworkEntity = event.getEntity();
-                Player player = Cache.getPlayerFromLaunchedFirework(fireworkEntity);
-                String ID = fireworkEntity.getFireworkMeta().getLore().get(1).substring(4);
-                Firework firework = Cache.getFireworkByID(ID);
-                String resizedImageName = Methods.getImageNameWithDimensions(firework.getImageName(), firework.getResizedImageDimensions());
+                try {
 
-                Methods.resizeImageIfNotExisting(firework.getImageName(), firework.getResizedImageDimensions());
+                    org.bukkit.entity.Firework fireworkEntity = event.getEntity();
+                    Player player = Cache.getPlayerFromLaunchedFirework(fireworkEntity);
+                    String ID = fireworkEntity.getFireworkMeta().getLore().get(1).substring(4);
+                    Firework firework = Cache.getFireworkByID(ID);
+                    String resizedImageName = Methods.getImageNameWithDimensions(firework.getImageName(), firework.getResizedImageDimensions());
 
-                Cache.loadImage(resizedImageName);
-                BufferedImage image = Cache.getLoadedImages().get(resizedImageName);
-                Cache.unloadImage(resizedImageName);
+                    Methods.resizeImageIfNotExisting(firework.getImageName(), firework.getResizedImageDimensions());
 
-                Location location = event.getEntity().getLocation();
+                    Cache.loadImage(resizedImageName);
+                    BufferedImage image = Cache.getLoadedImages().get(resizedImageName);
+                    Cache.unloadImage(resizedImageName);
 
-                StringBuilder imageDimensions = new StringBuilder(firework.getFireworkDimensions());
+                    Location location = event.getEntity().getLocation();
 
-                Integer imageAreaX = Integer.parseInt(imageDimensions.substring(0, imageDimensions.indexOf("x")));
-                Integer imageAreaY = Integer.parseInt(imageDimensions.substring(imageDimensions.indexOf("x") + 1, imageDimensions.length()));
+                    StringBuilder imageDimensions = new StringBuilder(firework.getFireworkDimensions());
 
-                Float yaw = Math.abs(player.getLocation().getYaw());
+                    Integer imageAreaX = Integer.parseInt(imageDimensions.substring(0, imageDimensions.indexOf("x")));
+                    Integer imageAreaY = Integer.parseInt(imageDimensions.substring(imageDimensions.indexOf("x") + 1, imageDimensions.length()));
 
-                while (yaw < 0) yaw += 360;
+                    Float yaw = Math.abs(player.getLocation().getYaw());
 
-                String facing;
+                    while (yaw < 0) yaw += 360;
 
-                if (yaw >= 45 && yaw < 135) facing = "west";
-                else if (yaw >= 135 && yaw < 225) facing = "north";
-                else if (yaw >= 225 && yaw < 315) facing = "east";
-                else if(yaw >= 315 || yaw < 45) facing = "south";
-                else facing = "south";
+                    String facing;
 
-                for (Integer i = 0; i < Cache.getTimesToDrawImage(); i++) {
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            drawImage(image, location, imageAreaX, imageAreaY, facing);
-                        }
-                    }.runTaskLaterAsynchronously(CIF.getInstance(), i * 20);
+                    if (yaw >= 45 && yaw < 135) facing = "west";
+                    else if (yaw >= 135 && yaw < 225) facing = "north";
+                    else if (yaw >= 225 && yaw < 315) facing = "east";
+                    else if (yaw >= 315 || yaw < 45) facing = "south";
+                    else facing = "south";
+
+                    for (Integer i = 0; i < Cache.getTimesToDrawImage(); i++) {
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                drawImage(image, location, imageAreaX, imageAreaY, facing);
+                            }
+                        }.runTaskLaterAsynchronously(CIF.getInstance(), i * 20);
+                    }
+
+                    CIF.getInstance().getLogger().info(player.getName() + " used a firework with the image " + firework.getImageName() + ". Drawn " + Cache.getTimesToDrawImage() + " times.");
+
+                } catch (Throwable ignored) {
                 }
-
-                CIF.getInstance().getLogger().info(player.getName() + " used a firework with the image " + firework.getImageName() + ". Drawn " + Cache.getTimesToDrawImage() + " times.");
 
             }
         }.runTaskAsynchronously(CIF.getInstance());
