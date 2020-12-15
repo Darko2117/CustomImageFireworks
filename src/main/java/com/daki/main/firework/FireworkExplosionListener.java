@@ -46,8 +46,6 @@ public class FireworkExplosionListener implements Listener {
                 Integer imageAreaX = Integer.parseInt(imageDimensions.substring(0, imageDimensions.indexOf("x")));
                 Integer imageAreaY = Integer.parseInt(imageDimensions.substring(imageDimensions.indexOf("x") + 1, imageDimensions.length()));
 
-                player.sendMessage(String.valueOf(player.getLocation().getYaw()));
-
                 Float yaw = Math.abs(player.getLocation().getYaw());
 
                 while (yaw < 0) yaw += 360;
