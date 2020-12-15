@@ -14,6 +14,9 @@ import org.bukkit.event.entity.FireworkExplodeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class FireworkExplosionListener implements Listener {
 
@@ -43,19 +46,27 @@ public class FireworkExplosionListener implements Listener {
                 Integer imageAreaX = Integer.parseInt(imageDimensions.substring(0, imageDimensions.indexOf("x")));
                 Integer imageAreaY = Integer.parseInt(imageDimensions.substring(imageDimensions.indexOf("x") + 1, imageDimensions.length()));
 
+                player.sendMessage(String.valueOf(player.getLocation().getYaw()));
+
                 Float yaw = Math.abs(player.getLocation().getYaw());
 
-                while (yaw > 360) yaw -= 360;
+                while (yaw < 0) yaw += 360;
 
                 String facing;
 
                 if (yaw >= 45 && yaw < 135) facing = "west";
                 else if (yaw >= 135 && yaw < 225) facing = "north";
                 else if (yaw >= 225 && yaw < 315) facing = "east";
+                else if(yaw >= 315 || yaw < 45) facing = "south";
                 else facing = "south";
 
                 for (Integer i = 0; i < Cache.getTimesToDrawImage(); i++) {
-                    drawImage(image, location, imageAreaX, imageAreaY, facing);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            drawImage(image, location, imageAreaX, imageAreaY, facing);
+                        }
+                    }.runTaskLaterAsynchronously(CIF.getInstance(), i * 20);
                 }
 
                 CIF.getInstance().getLogger().info(player.getName() + " used a firework with the image " + firework.getImageName() + ". Drawn " + Cache.getTimesToDrawImage() + " times.");
@@ -66,6 +77,8 @@ public class FireworkExplosionListener implements Listener {
     }
 
     private static void drawImage(BufferedImage image, Location location, Integer imageAreaX, Integer imageAreaZ, String facing) {
+
+        List<ParticleBuilder> particles = new ArrayList<>();
 
         switch (facing) {
 
@@ -81,7 +94,7 @@ public class FireworkExplosionListener implements Listener {
                         location1.setZ(location1.getZ() + (double) (imageAreaX / 2) - ((double) z * ((double) imageAreaZ / (double) image.getHeight())));
                         location1.setX(location1.getX() + (double) (imageAreaZ / 2) - ((double) x * ((double) imageAreaX / (double) image.getWidth())));
                         particle.location(location1);
-                        particle.spawn();
+                        particles.add(particle);
 
                     }
                 }
@@ -99,7 +112,7 @@ public class FireworkExplosionListener implements Listener {
                         location1.setX(location1.getX() - (double) (imageAreaX / 2) + ((double) x * ((double) imageAreaX / (double) image.getWidth())));
                         location1.setZ(location1.getZ() + (double) (imageAreaZ / 2) - ((double) z * ((double) imageAreaZ / (double) image.getHeight())));
                         particle.location(location1);
-                        particle.spawn();
+                        particles.add(particle);
 
                     }
                 }
@@ -117,7 +130,7 @@ public class FireworkExplosionListener implements Listener {
                         location1.setZ(location1.getZ() - (double) (imageAreaX / 2) + ((double) z * ((double) imageAreaZ / (double) image.getHeight())));
                         location1.setX(location1.getX() - (double) (imageAreaZ / 2) + ((double) x * ((double) imageAreaX / (double) image.getWidth())));
                         particle.location(location1);
-                        particle.spawn();
+                        particles.add(particle);
 
                     }
                 }
@@ -135,12 +148,19 @@ public class FireworkExplosionListener implements Listener {
                         location1.setX(location1.getX() + (double) (imageAreaX / 2) - ((double) x * ((double) imageAreaX / (double) image.getWidth())));
                         location1.setZ(location1.getZ() - (double) (imageAreaZ / 2) + ((double) z * ((double) imageAreaZ / (double) image.getHeight())));
                         particle.location(location1);
-                        particle.spawn();
+                        particles.add(particle);
 
                     }
                 }
                 break;
 
+        }
+
+        while (!particles.isEmpty()) {
+            Integer i = new Random().nextInt(particles.size());
+            ParticleBuilder particle = particles.get(i);
+            particle.spawn();
+            particles.remove(particle);
         }
 
     }
