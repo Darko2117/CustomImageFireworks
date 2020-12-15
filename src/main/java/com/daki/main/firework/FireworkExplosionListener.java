@@ -48,7 +48,7 @@ public class FireworkExplosionListener implements Listener {
                     Integer imageAreaX = Integer.parseInt(imageDimensions.substring(0, imageDimensions.indexOf("x")));
                     Integer imageAreaY = Integer.parseInt(imageDimensions.substring(imageDimensions.indexOf("x") + 1, imageDimensions.length()));
 
-                    Float yaw = Math.abs(player.getLocation().getYaw());
+                    Float yaw = player.getLocation().getYaw();
 
                     while (yaw < 0) yaw += 360;
 
@@ -57,7 +57,6 @@ public class FireworkExplosionListener implements Listener {
                     if (yaw >= 45 && yaw < 135) facing = "west";
                     else if (yaw >= 135 && yaw < 225) facing = "north";
                     else if (yaw >= 225 && yaw < 315) facing = "east";
-                    else if (yaw >= 315 || yaw < 45) facing = "south";
                     else facing = "south";
 
                     for (Integer i = 0; i < Cache.getTimesToDrawImage(); i++) {
@@ -66,7 +65,7 @@ public class FireworkExplosionListener implements Listener {
                             public void run() {
                                 drawImage(image, location, imageAreaX, imageAreaY, facing);
                             }
-                        }.runTaskLaterAsynchronously(CIF.getInstance(), i * 20);
+                        }.runTaskLaterAsynchronously(CIF.getInstance(), i * 10);
                     }
 
                     CIF.getInstance().getLogger().info(player.getName() + " used a firework with the image " + firework.getImageName() + ". Drawn " + Cache.getTimesToDrawImage() + " times.");
